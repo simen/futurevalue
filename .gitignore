@@ -1,0 +1,10 @@
+.bundle
+log/*
+tmp/**/*
+.DS_Store
+.rvmrc
+*~
+sync/photos/*
+coverage/
+sync/spec/fixtures/vcr_cassettes/
+
