@@ -1,6 +1,8 @@
 require 'spec_helper'
 require 'benchmark'
 
+Future::Value.workers = 50
+
 describe Future::Value do
   it "forwards missing methods" do
     v = Future::Value.new { [1,2,3] }
@@ -23,7 +25,7 @@ describe Future::Value do
 
   it "several futures should run together" do
     # Calculating the sum of several futures that each should take one second to appear should take less than three seconds
-    Benchmark.measure { (1..100).map { |i| Future::Value.new { sleep(1); i} }.inject(0){ |r, e| r+e } }.real.should be < 3.0
+    Benchmark.measure { (1..50).map { |i| Future::Value.new { sleep(1); i} }.inject(0){ |r, e| r+e } }.real.should be < 3.0
   end
 
   it "reports errors" do 
