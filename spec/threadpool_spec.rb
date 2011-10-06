@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Future::Threadpool do
   it "runs a number of threads" do
     p = Future::Threadpool.new(10)
-    p.count.should eq 10
+    p.workers.should eq 10
   end
 
   it "puts jobs on the queue" do
@@ -30,4 +30,19 @@ describe Future::Threadpool do
     sleep 0.5
     sentinel.size.should == 100
   end
+
+  it "resizes gracefully" do
+  	p = Future::Threadpool.new(10)
+  	p.workers = 5
+  	sleep 0.1
+  	p.workers.should eq 5
+  	p.workers = 10
+  	sleep 0.1
+  	p.workers.should eq 10
+  	p.workers = 0
+  	sleep 0.1
+  	p.workers.should eq 0
+  	-> {p.workers = -1}.should raise_exception ArgumentError
+  end
+
 end

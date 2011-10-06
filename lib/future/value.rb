@@ -5,18 +5,17 @@ module Future
     DEFAULT_WORKER_COUNT = 7
 
     def self.workers=(value)      
-      raise ArgumentError, "Worker count cannot be changed. Set worker count before computing your first Future::Value" if @@pool
-      @@pool = Future::Threadpool.new(value)
-      ObjectSpace.define_finalizer(self, proc { @@pool.each(&:kill) })
+      @@pool ||= Future::Threadpool.new(value)
+      @@pool.workers = value
     end
 
     def self.workers
-      return nil unless @@pool
-      @@pool.count
+      return 0 unless @@pool
+      @@pool.workers
     end
 
     def initialize(&block)
-      Future::Value.workers ||= DEFAULT_WORKER_COUNT
+      self.class.workers ||= DEFAULT_WORKER_COUNT
       @result = Queue.new
       @done = false
       @exception = nil

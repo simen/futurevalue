@@ -2,13 +2,23 @@ require 'thread'
 
 module Future
   class Threadpool
-    def initialize(workers)
+    def initialize(count)
       @queue = Queue.new
-      @workers = (1..workers).map{ new_worker }
+      @workers = []
+      self.workers = count
     end
 
-    def count
+    def workers
       @workers.size
+    end
+
+    def workers=(value)
+    	raise ArgumentError, "Worker count must be >= 0" if value < 0
+    	if value > workers
+    		(value-workers).times { @workers << new_worker }
+    	else
+    		(workers-value).times { @queue << proc { @workers.delete(Thread.current); Thread.current.exit } }
+    	end
     end
 
     def << (job)
@@ -29,6 +39,5 @@ module Future
         end
       end
     end
-
   end
 end

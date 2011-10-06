@@ -35,4 +35,13 @@ describe Future::Value do
     ->{f.value}.should raise_error(Exception)    
   end
 
+  it "resizes worker amount" do
+    Future::Value.workers = 10
+    sleep 0.1
+    Future::Value.workers.should eq 10
+    Future::Value.workers = 1
+    sleep 0.1
+    Future::Value.workers.should eq 1    
+  end
+
 end
