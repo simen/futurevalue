@@ -13,7 +13,6 @@ module Future
     end
 
     def workers=(value)
-      raise ArgumentError, "Worker count must be >= 0" if value < 0
       if value > workers
         (value-workers).times { @workers << new_worker }
       else
