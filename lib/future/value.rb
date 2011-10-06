@@ -1,49 +1,45 @@
 module Future
   class Value
-    @@pool = nil
+    
+    MINIMUM_WORKERS = 7
+    @pool = Future::Threadpool.new(0)
 
-    DEFAULT_WORKER_COUNT = 7
-
-    def self.workers=(value)      
-      @@pool ||= Future::Threadpool.new(value)
-      @@pool.workers = value
-    end
-
-    def self.workers
-      return 0 unless @@pool
-      @@pool.workers
+    class << self
+      attr_reader :pool
     end
 
     def initialize(&block)
-      self.class.workers ||= DEFAULT_WORKER_COUNT
-      @result = Queue.new
-      @done = false
+      if self.class.pool.workers < MINIMUM_WORKERS
+        self.class.pool.workers = MINIMUM_WORKERS 
+      end
+      
+      @response_queue = Queue.new
+      @ready = false
       @exception = nil
-      @@pool << lambda do
+
+      self.class.pool << lambda do
         begin
-          @result << block.call 
+          @response_queue << block.call
         rescue Exception => e
           @exception = e
-          @done = true
         end
+        @ready = true
       end
     end
 
-    def value      
-      unless @done
-        @value = @result.pop
-        @done = true
+    def value            
+      if @response_queue
+        @value = @response_queue.pop
+        @response_queue = nil
       end
+
       raise @exception if @exception        
+
       @value
     end
 
-    def done?
-      @done || @result.length > 0
-    end
-
-    def error?
-      !@exception.nil?
+    def ready?
+      @ready
     end
 
     def method_missing(method, *args, &block)      
@@ -59,13 +55,13 @@ module Future
     end
 
     def inspect 
-      if !done?
+      if !ready?
         "#<#{self.class.name} value=[[pending]]>"
       else
-        unless error?
+        unless @exception
           "#<#{self.class.name} value=#{self.value.inspect}>"
         else
-          "#<#{self.class.name} value=#{@exception.inspect}>"
+          "#<#{self.class.name} #{@exception.inspect}>"
         end
       end
     end

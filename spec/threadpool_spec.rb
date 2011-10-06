@@ -21,7 +21,9 @@ describe Future::Threadpool do
     p.workers = 0
     sleep 0.1
     p.workers.should eq 0
-    -> {p.workers = -1}.should raise_exception ArgumentError
+    p.workers = -1
+    sleep 0.1
+    p.workers.should eq 0
     p.close
   end
 
