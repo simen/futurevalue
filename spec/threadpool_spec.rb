@@ -11,19 +11,24 @@ describe Future::Threadpool do
   end
 
   it "resizes gracefully" do
+    initial_threadcount = Thread.list.size
     p = Future::Threadpool.new(10)
     p.workers = 5
     sleep 0.1
     p.workers.should eq 5
+    Thread.list.size.should eq initial_threadcount+5
     p.workers = 10
     sleep 0.1
     p.workers.should eq 10
+    Thread.list.size.should eq initial_threadcount+10
     p.workers = 0
     sleep 0.1
     p.workers.should eq 0
+    Thread.list.size.should eq initial_threadcount
     p.workers = -1
     sleep 0.1
     p.workers.should eq 0
+    Thread.list.size.should eq initial_threadcount
     p.close
   end
 
