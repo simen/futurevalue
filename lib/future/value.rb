@@ -22,8 +22,6 @@ module Future
           @response_queue << block.call
         rescue Exception => e
           @exception = e
-          # Must post something to wake up the Future::Value even
-          # if no value will ever arrive.
           @response_queue << nil 
         end
         @ready = true
