@@ -45,7 +45,7 @@ Basically a Future::Value wraps a thread in such a way that it looks like you ge
     # a, b and c are all "calculated" in parallel.
     a = Future::Value.new { sleep(2); "Hello" }
     b = Future::Value.new { sleep(3); "from the"}
-    c = Future::VAlue.new { sleep(1); "future!" }
+    c = Future::Value.new { sleep(1); "future!" }
     # the moment the content of the values is needed, the main tread blocks until data is ready
     "#{a} #{b} #{c}"
       => Hello from the future
