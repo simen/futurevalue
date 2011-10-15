@@ -34,7 +34,7 @@ describe Future::Value do
   end
 
   it "reports errors" do 
-    f = Future::Value.new { raise Exception }
+    f = Future::Value.new { sleep 1; raise Exception }
     sleep 0.1
     ->{f.value}.should raise_error(Exception)    
     f.ready?.should eq true
