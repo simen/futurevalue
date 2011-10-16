@@ -9,22 +9,15 @@ module Future
     end
 
     def initialize(&block)
-      if self.class.pool.workers < MINIMUM_WORKERS
-        self.class.pool.workers = MINIMUM_WORKERS 
-      end
-      
-      @response_queue = Queue.new
-      @ready = false
-      @exception = nil
+      self.class.pool.workers = MINIMUM_WORKERS  if self.class.pool.workers < MINIMUM_WORKERS
 
+      @response_queue = Queue.new
       self.class.pool << lambda do
         begin
           @response_queue << block.call
-        rescue Exception => e
-          @exception = e
+        rescue Exception => @exception
           @response_queue << nil 
         end
-        @ready = true
       end
     end
 
@@ -33,14 +26,12 @@ module Future
         @value = @response_queue.pop
         @response_queue = nil
       end
-
-      raise @exception if @exception        
-
+      raise @exception if @exception
       @value
     end
 
     def ready?
-      @ready
+      @response_queue.nil? || !@response_queue.empty?
     end
 
     def method_missing(method, *args, &block)      
@@ -57,10 +48,10 @@ module Future
 
     def inspect 
       if !ready?
-        "#<#{self.class.name} value=[[pending]]>"
+        "#<#{self.class.name} @value=[pending]>"
       else
         unless @exception
-          "#<#{self.class.name} value=#{self.value.inspect}>"
+          "#<#{self.class.name} @value=#{self.value.inspect}>"
         else
           "#<#{self.class.name} #{@exception.inspect}>"
         end
