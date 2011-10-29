@@ -27,15 +27,11 @@ The same code with the requests and processing wrapped in a Future::Value
 Installation
 ============
 
-Not yet published as a gem, so you'll have to
-
-    git clone git@github.com:simen/future.git
-    cd future
-    rake install
+    gem install futurevalue
 
 Or if you use the awesomeness that is bundler, you stick this in your Gemfile:
 
-    gem "future", :git => git@github.com:simen/future.git
+    gem "futurevalue"
 
 Usage
 =====
