@@ -1,1 +1,1 @@
-require File.dirname(__FILE__)+'/../lib/future.rb'
+require File.dirname(__FILE__)+'/../lib/futurevalue.rb'
