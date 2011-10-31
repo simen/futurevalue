@@ -1,2 +1,2 @@
-require 'future/threadpool'
-require 'future/value'
+require 'futurevalue/threadpool'
+require 'futurevalue/value'
