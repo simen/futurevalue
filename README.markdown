@@ -12,7 +12,7 @@ Without Future:
       end.flatten
     end.real
       => 4.5 # seconds
-    
+
 
 The same code with the requests and processing wrapped in a Future::Value
 
@@ -71,7 +71,7 @@ The Future::Threadpool is a useful little class in itself and can be put to good
     # Adds a job to the pool
     pool << proc do
       # Work you'd like to have done in parallel
-      # Probably involving IO seeing as ruby doesn't really utilize more than one 
+      # Probably involving IO seeing as ruby doesn't really utilize more than one
       # cpu core anyway.
     end
 
@@ -83,7 +83,7 @@ A word of warning: Future::Threadpool will never be garbage collected if you let
     # How to leak memory and threads:
     pool = Future::Threadpool.new(12)
     pool = nil
-    # Congrats: you have just leaked an instance of Future::Threadpool + 12 sleeping threads 
+    # Congrats: you have just leaked an instance of Future::Threadpool + 12 sleeping threads
 
 So kids, remember this: Close your pools if you plan to lose track of them.
-    
+
