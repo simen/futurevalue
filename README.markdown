@@ -1,7 +1,7 @@
 Future
 ======
 
-A little class to represent a promise of a value that will be provided at a later time. Useful to perform asynchronous operations without fouling the code up with event oriented cruft. A Future::Value can generally be used in place of the future value it represents.
+A little class to represent a promise of a value that will be provided at a later time. Useful to perform asynchronous operations without fouling the code up with event-oriented cruft. A Future::Value can generally be used in place of the future value it represents.
 
 Without Future:
 
@@ -36,13 +36,13 @@ Or if you use the awesomeness that is bundler, you stick this in your Gemfile:
 Usage
 =====
 
-Basically a Future::Value wraps a thread in such a way that it looks like you get the result of a time consuming operation directly. Not until you try to access the result will the thread actually block. In this way you may write asynchronous code that looks like traditional straight down ruby. Especially useful for performing a number of http-requests and let them run in parallel while you perform other tasks.
+Basically a Future::Value wraps a thread in such a way that it looks like you get the result of a time-consuming operation directly. Not until you try to access the result will the thread actually block. In this way you may write asynchronous code that looks like traditional straight down ruby. Especially useful for performing a number of http-requests and let them run in parallel while you perform other tasks.
 
     # a, b and c are all "calculated" in parallel.
     a = Future::Value.new { sleep(2); "Hello" }
     b = Future::Value.new { sleep(3); "from the"}
     c = Future::Value.new { sleep(1); "future!" }
-    # the moment the content of the values is needed, the main tread blocks until data is ready
+    # the moment the content of the values is needed, the main thread blocks until data is ready
     "#{a} #{b} #{c}"
       => Hello from the future
     # total time taken: 3 seconds as opposed to 6 with the traditional way
@@ -54,7 +54,7 @@ Future::Value use a nice and simple threadpool to process the values. By default
 
     Future::Value.pool.workers = 12
 
-Remember that if you use Future::Value with ActiveRecord you should visit your database.yml-file and make sure your database connection pool match the number of workers you employ.
+Remember that if you use Future::Value with ActiveRecord you should visit your database.yml-file and make sure your database connection pool matches the number of workers you employ.
 
 If you need to wait for all jobs to finish and shut down the worker threads you do this:
 
@@ -75,7 +75,7 @@ The Future::Threadpool is a useful little class in itself and can be put to good
       # cpu core anyway.
     end
 
-    # Waits for all pending jobs to finish then proceeds to kill the workers one by one
+    # Waits for all pending jobs to finish, then proceeds to kill the workers one by one
     pool.close
 
 A word of warning: Future::Threadpool will never be garbage collected if you let it out of your scope without closing it first, because the sleeping workers will keep a reference to it:
